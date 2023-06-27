@@ -1,5 +1,7 @@
+import { AccountService } from './services/account.service';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { UserDTO } from './DTOs/userDTO';
 
 @Component({
   selector: 'app-root',
@@ -9,10 +11,19 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   users: any;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private accountService: AccountService
+  ) {}
 
   ngOnInit(): void {
     this.getUsers();
+    this.setCurrentUser();
+  }
+
+  setCurrentUser() {
+    const user: UserDTO = JSON.parse(localStorage.getItem('user') || '');
+    this.accountService.setCurrentUser(user); // که این یوزری که میفرستیم داخل   =>   replySubject ست می شود
   }
 
   getUsers() {
