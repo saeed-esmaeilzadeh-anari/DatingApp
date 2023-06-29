@@ -11,7 +11,7 @@ export class AccountService {
   private currentUserSource = new ReplaySubject<UserDTO>();
   currentUser = this.currentUserSource.asObservable();
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
 
   login(model: any) {
     return this.httpClient.post(`${this.baseUrl}accoun/login`, model).pipe(
@@ -26,9 +26,24 @@ export class AccountService {
   }
 
   logout() {
-    localStorage.removeItem('user'); 
+    localStorage.removeItem('user');
     this.currentUserSource.next({} as UserDTO);
     // return this.httpClient.get(`${this.baseUrl}account/logout`);
+  }
+
+  register(model: any) {
+    return this.httpClient.post(this.baseUrl + 'account/register', model).pipe(
+      map((result: any) => {
+
+        console.log(result);
+        if (result.isSuccess && result.data != undefined) {
+
+          localStorage.setItem('user', JSON.stringify(result.data))
+          this.currentUserSource.next(result.data);
+        }
+        return result;
+      })
+    );
   }
 
   setCurrentUser(user: UserDTO) {
